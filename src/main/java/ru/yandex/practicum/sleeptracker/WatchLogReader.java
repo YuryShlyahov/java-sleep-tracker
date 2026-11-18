@@ -32,7 +32,7 @@ public class WatchLogReader {
         return new SleepingSession(
                 LocalDateTime.parse(sleepData[0], DATE_TIME_FORMATTER),
                 LocalDateTime.parse(sleepData[1], DATE_TIME_FORMATTER),
-                sleepData[2]
+                SleepQuality.valueOf(sleepData[2])
         );
     }
 }

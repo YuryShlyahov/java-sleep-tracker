@@ -3,14 +3,17 @@ package ru.yandex.practicum.sleeptracker;
 import java.time.LocalDateTime;
 
 public class SleepingSession {
-    LocalDateTime start;
-    LocalDateTime finish;
-    SleepQuality sleepQuality;
+    private final LocalDateTime start;
+    private final LocalDateTime finish;
+    private final SleepQuality sleepQuality;
 
-    public SleepingSession(LocalDateTime start, LocalDateTime finish, String sleepQuality) {
+    public SleepingSession(LocalDateTime start, LocalDateTime finish, SleepQuality sleepQuality) {
+        if (!start.isBefore(finish)) {
+            throw new IllegalArgumentException("время начала сна идет после конца сна");
+        }
         this.start = start;
         this.finish = finish;
-        this.sleepQuality = SleepQuality.valueOf(sleepQuality);
+        this.sleepQuality = sleepQuality;
     }
 
     @Override
@@ -18,7 +21,19 @@ public class SleepingSession {
         return "SleepingSession{" +
                 "start=" + start +
                 ", finish=" + finish +
-                ", sleepQuality='" + sleepQuality + '\'' +
+                ", sleepQuality=" + sleepQuality +
                 '}';
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getFinish() {
+        return finish;
+    }
+
+    public SleepQuality getSleepQuality() {
+        return sleepQuality;
     }
 }
