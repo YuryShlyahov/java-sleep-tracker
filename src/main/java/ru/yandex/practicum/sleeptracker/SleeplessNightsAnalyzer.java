@@ -20,10 +20,10 @@ public class SleeplessNightsAnalyzer
         }
 
         LocalDateTime observationStart =
-                sleepingSessions.get(0).getStart();
+                sleepingSessions.getFirst().getStart();
 
         LocalDateTime observationFinish =
-                sleepingSessions.get(sleepingSessions.size() - 1)
+                sleepingSessions.getLast()
                         .getFinish();
 
         LocalDate firstNight = observationStart.toLocalDate();
