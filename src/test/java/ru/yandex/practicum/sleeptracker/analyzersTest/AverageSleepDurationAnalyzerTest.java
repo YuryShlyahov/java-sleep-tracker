@@ -1,7 +1,10 @@
-package ru.yandex.practicum.sleeptracker;
+package ru.yandex.practicum.sleeptracker.analyzersTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.sleeptracker.SleepingSession;
+import ru.yandex.practicum.sleeptracker.analyzers.AverageSleepDurationAnalyzer;
+import ru.yandex.practicum.sleeptracker.enums.SleepQuality;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,36 +13,18 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MinSleepDurationAnalyzerTest {
-
-    private MinSleepDurationAnalyzer minSleepDurationAnalyzer;
+public class AverageSleepDurationAnalyzerTest {
+    private AverageSleepDurationAnalyzer averageSleepDurationAnalyzer;
     private List<SleepingSession> sleepingSessions;
 
     @BeforeEach
     public void setUp() {
-        minSleepDurationAnalyzer = new MinSleepDurationAnalyzer();
+        averageSleepDurationAnalyzer = new AverageSleepDurationAnalyzer();
         sleepingSessions = new ArrayList<>();
     }
 
     @Test
-    public void shouldFindMin() {
-        SleepingSession firstSession = new SleepingSession(
-                LocalDateTime.of(2025, 10, 1, 23, 0),
-                LocalDateTime.of(2025, 10, 2, 7, 0),
-                SleepQuality.GOOD
-        );
-        SleepingSession secondSession = new SleepingSession(
-                LocalDateTime.of(2025, 10, 2, 23, 0),
-                LocalDateTime.of(2025, 10, 3, 5, 0),
-                SleepQuality.BAD
-        );
-        sleepingSessions.add(firstSession);
-        sleepingSessions.add(secondSession);
-        assertEquals(360, minSleepDurationAnalyzer.apply(sleepingSessions).getValue());
-    }
-
-    @Test
-    public void shouldFindMinWithManyArguments() {
+    public void shouldCountAverageDurationOfThreeSessions() {
         SleepingSession firstSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 1, 23, 0),
                 LocalDateTime.of(2025, 10, 2, 5, 0),
@@ -58,29 +43,47 @@ public class MinSleepDurationAnalyzerTest {
         sleepingSessions.add(firstSession);
         sleepingSessions.add(secondSession);
         sleepingSessions.add(thirdSession);
-        assertEquals(360, minSleepDurationAnalyzer.apply(sleepingSessions).getValue());
+        assertEquals(420, averageSleepDurationAnalyzer.apply(sleepingSessions).getValue());
     }
 
     @Test
-    public void shouldFindMinWithEqualDuration() {
+    public void shouldCountAverageWithFractionalValue() {
         SleepingSession firstSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 1, 23, 0),
-                LocalDateTime.of(2025, 10, 2, 7, 0),
+                LocalDateTime.of(2025, 10, 2, 5, 0),
                 SleepQuality.GOOD
         );
         SleepingSession secondSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 2, 23, 0),
-                LocalDateTime.of(2025, 10, 3, 7, 0),
+                LocalDateTime.of(2025, 10, 3, 5, 1),
                 SleepQuality.BAD
+        );
+        SleepingSession thirdSession = new SleepingSession(
+                LocalDateTime.of(2025, 10, 3, 23, 0),
+                LocalDateTime.of(2025, 10, 4, 5, 3),
+                SleepQuality.NORMAL
         );
         sleepingSessions.add(firstSession);
         sleepingSessions.add(secondSession);
-        assertEquals(480, minSleepDurationAnalyzer.apply(sleepingSessions).getValue());
+        sleepingSessions.add(thirdSession);
+        assertEquals(361.3333,
+                averageSleepDurationAnalyzer.apply(sleepingSessions).getValue(), 0.0001);
+    }
+
+    @Test
+    public void shouldCountAverageValueWithOneSession() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 10, 1, 23, 0),
+                LocalDateTime.of(2025, 10, 2, 5, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
+        assertEquals(360, averageSleepDurationAnalyzer.apply(sleepingSessions).getValue());
     }
 
     @Test
     public void shouldThrowExceptionWithEmptyList() {
         assertThrows(IllegalArgumentException.class,
-                () -> minSleepDurationAnalyzer.apply(sleepingSessions));
+                () -> averageSleepDurationAnalyzer.apply(sleepingSessions));
     }
 }

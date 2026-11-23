@@ -1,7 +1,10 @@
-package ru.yandex.practicum.sleeptracker;
+package ru.yandex.practicum.sleeptracker.analyzersTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.sleeptracker.SleepingSession;
+import ru.yandex.practicum.sleeptracker.analyzers.MinSleepDurationAnalyzer;
+import ru.yandex.practicum.sleeptracker.enums.SleepQuality;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,19 +13,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MaxSleepDurationAnalyzerTest {
+public class MinSleepDurationAnalyzerTest {
 
-    private MaxSleepDurationAnalyzer maxSleepDurationAnalyzer;
+    private MinSleepDurationAnalyzer minSleepDurationAnalyzer;
     private List<SleepingSession> sleepingSessions;
 
     @BeforeEach
     public void setUp() {
-        maxSleepDurationAnalyzer = new MaxSleepDurationAnalyzer();
+        minSleepDurationAnalyzer = new MinSleepDurationAnalyzer();
         sleepingSessions = new ArrayList<>();
     }
 
     @Test
-    public void shouldFindMax() {
+    public void shouldFindMin() {
         SleepingSession firstSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 1, 23, 0),
                 LocalDateTime.of(2025, 10, 2, 7, 0),
@@ -35,11 +38,11 @@ public class MaxSleepDurationAnalyzerTest {
         );
         sleepingSessions.add(firstSession);
         sleepingSessions.add(secondSession);
-        assertEquals(480, maxSleepDurationAnalyzer.apply(sleepingSessions).getValue());
+        assertEquals(360, minSleepDurationAnalyzer.apply(sleepingSessions).getValue());
     }
 
     @Test
-    public void shouldFindMaxWithManyArguments() {
+    public void shouldFindMinWithManyArguments() {
         SleepingSession firstSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 1, 23, 0),
                 LocalDateTime.of(2025, 10, 2, 5, 0),
@@ -52,17 +55,17 @@ public class MaxSleepDurationAnalyzerTest {
         );
         SleepingSession thirdSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 3, 23, 0),
-                LocalDateTime.of(2025, 10, 4, 8, 0),
+                LocalDateTime.of(2025, 10, 4, 7, 0),
                 SleepQuality.NORMAL
         );
         sleepingSessions.add(firstSession);
         sleepingSessions.add(secondSession);
         sleepingSessions.add(thirdSession);
-        assertEquals(540, maxSleepDurationAnalyzer.apply(sleepingSessions).getValue());
+        assertEquals(360, minSleepDurationAnalyzer.apply(sleepingSessions).getValue());
     }
 
     @Test
-    public void shouldFindMaxWithEqualDuration() {
+    public void shouldFindMinWithEqualDuration() {
         SleepingSession firstSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 1, 23, 0),
                 LocalDateTime.of(2025, 10, 2, 7, 0),
@@ -73,20 +76,14 @@ public class MaxSleepDurationAnalyzerTest {
                 LocalDateTime.of(2025, 10, 3, 7, 0),
                 SleepQuality.BAD
         );
-        SleepingSession thirdSession = new SleepingSession(
-                LocalDateTime.of(2025, 10, 3, 23, 0),
-                LocalDateTime.of(2025, 10, 4, 5, 0),
-                SleepQuality.BAD
-        );
         sleepingSessions.add(firstSession);
         sleepingSessions.add(secondSession);
-        sleepingSessions.add(thirdSession);
-        assertEquals(480, maxSleepDurationAnalyzer.apply(sleepingSessions).getValue());
+        assertEquals(480, minSleepDurationAnalyzer.apply(sleepingSessions).getValue());
     }
 
     @Test
     public void shouldThrowExceptionWithEmptyList() {
         assertThrows(IllegalArgumentException.class,
-                () -> maxSleepDurationAnalyzer.apply(sleepingSessions));
+                () -> minSleepDurationAnalyzer.apply(sleepingSessions));
     }
 }
