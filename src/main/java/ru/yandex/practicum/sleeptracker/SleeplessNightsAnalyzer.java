@@ -18,27 +18,16 @@ public class SleeplessNightsAnalyzer
                     "Количество бессонных ночей"
             );
         }
-
-        LocalDateTime observationStart =
-                sleepingSessions.getFirst().getStart();
-
-        LocalDateTime observationFinish =
-                sleepingSessions.getLast()
-                        .getFinish();
-
-        LocalDate firstNight = observationStart.toLocalDate();
-
-        if (observationStart.toLocalTime().isBefore(LocalTime.NOON)) {
-            firstNight = firstNight.minusDays(1);
-        }
-
-        LocalDate lastNight = observationFinish.toLocalDate();
-
-        if (observationFinish.toLocalTime().isBefore(LocalTime.NOON)) {
-            lastNight = lastNight.minusDays(1);
+        LocalDate firstNight = getFirstNight(sleepingSessions);
+        LocalDate lastNight = getLastNight(sleepingSessions);
+        if (firstNight.isAfter(lastNight)) {
+            return new SleepAnalysisResult<>(
+                    0L,
+                    "Количество бессонных ночей"
+            );
         }
         long count = firstNight.datesUntil(lastNight.plusDays(1))
-                .filter(date -> isSleeplessNight(date, sleepingSessions))
+                .filter(date -> !hasSleepDuringNight(sleepingSessions, date))
                 .count();
 
         return new SleepAnalysisResult<>(
@@ -47,17 +36,36 @@ public class SleeplessNightsAnalyzer
         );
     }
 
-    private boolean isSleeplessNight(
-            LocalDate date,
-            List<SleepingSession> sleepingSessions
-    ) {
-        LocalDateTime nightStart = date.plusDays(1).atStartOfDay();
-        LocalDateTime nightFinish = date.plusDays(1).atTime(6, 0);
+    private boolean hasSleepDuringNight(
+            List<SleepingSession> sessions,
+            LocalDate date) {
 
-        return sleepingSessions.stream()
-                .noneMatch(session ->
-                        session.getStart().isBefore(nightFinish)
-                                && session.getFinish().isAfter(nightStart)
-                );
+        LocalDateTime nightStart = date.atStartOfDay();
+        LocalDateTime nightEnd = date.atTime(6, 0);
+
+        return sessions.stream()
+                .anyMatch(session ->
+                        session.getStart().isBefore(nightEnd)
+                                && session.getFinish().isAfter(nightStart));
+    }
+
+    private LocalDate getFirstNight(List<SleepingSession> sessions) {
+        LocalDateTime firstStart = sessions.getFirst().getStart();
+
+        if (firstStart.toLocalTime().isBefore(LocalTime.NOON)) {
+            return firstStart.toLocalDate();
+        }
+
+        return firstStart.toLocalDate().plusDays(1);
+    }
+
+    private LocalDate getLastNight(List<SleepingSession> sessions) {
+        LocalDateTime lastFinish = sessions.getLast().getFinish();
+
+        if (lastFinish.toLocalTime().equals(LocalTime.MIDNIGHT)) {
+            return lastFinish.toLocalDate().minusDays(1);
+        }
+
+        return lastFinish.toLocalDate();
     }
 }

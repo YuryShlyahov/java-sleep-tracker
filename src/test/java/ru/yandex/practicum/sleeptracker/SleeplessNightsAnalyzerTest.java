@@ -20,7 +20,7 @@ public class SleeplessNightsAnalyzerTest {
     }
 
     @Test
-    public void shouldCountZeroSleeplessNights() {
+    public void shouldCountZeroSleeplessNightsWithNormalSleep() {
         SleepingSession firstSession = new SleepingSession(
                 LocalDateTime.of(2025, 10, 1, 23, 0),
                 LocalDateTime.of(2025, 10, 2, 5, 0),
@@ -37,14 +37,98 @@ public class SleeplessNightsAnalyzerTest {
                 SleepQuality.NORMAL
         );
         SleepingSession fourthSession = new SleepingSession(
-                LocalDateTime.of(2025, 10, 5, 23, 0),
-                LocalDateTime.of(2025, 10, 6, 4, 0),
+                LocalDateTime.of(2025, 10, 4, 23, 0),
+                LocalDateTime.of(2025, 10, 5, 4, 0),
                 SleepQuality.BAD
         );
         sleepingSessions.add(firstSession);
         sleepingSessions.add(secondSession);
         sleepingSessions.add(thirdSession);
         sleepingSessions.add(fourthSession);
+        assertEquals(0, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+    @Test
+    public void shouldCountZeroInEmptyList() {
+        assertEquals(0, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+    @Test
+    public void shouldCountZeroWithOneDay() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 10, 1, 14, 0),
+                LocalDateTime.of(2025, 10, 1, 15, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
+        assertEquals(0, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+    @Test
+    public void shouldCountZeroWithOneEveningSleep() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 10, 1, 23, 0),
+                LocalDateTime.of(2025, 10, 2, 0, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
+        assertEquals(0, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+    @Test
+    public void shouldCountZeroWithOneNightSleep() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 10, 1, 23, 0),
+                LocalDateTime.of(2025, 10, 2, 2, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
+        assertEquals(0, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+    @Test
+    public void shouldCountOneWithOneSleeplessNight() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 10, 1, 23, 0),
+                LocalDateTime.of(2025, 10, 2, 7, 0),
+                SleepQuality.GOOD
+        );
+        SleepingSession secondSession = new SleepingSession(
+                LocalDateTime.of(2025, 10, 3, 23, 0),
+                LocalDateTime.of(2025, 10, 4, 7, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
+        sleepingSessions.add(secondSession);
+        assertEquals(1, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+    @Test
+    public void shouldCountOneWithDifferentMonth() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 11, 29, 23, 0),
+                LocalDateTime.of(2025, 11, 30, 7, 0),
+                SleepQuality.GOOD
+        );
+        SleepingSession secondSession = new SleepingSession(
+                LocalDateTime.of(2025, 12, 1, 23, 0),
+                LocalDateTime.of(2025, 12, 2, 7, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
+        sleepingSessions.add(secondSession);
+        assertEquals(1, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+
+    @Test
+    public void shouldCountZeroWithWakeAtSix() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 11, 1, 23, 0),
+                LocalDateTime.of(2025, 11, 2, 6, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
         assertEquals(0, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
     }
 
