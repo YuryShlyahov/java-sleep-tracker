@@ -1,7 +1,10 @@
-package ru.yandex.practicum.sleeptracker;
+package ru.yandex.practicum.sleeptracker.analyzersTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.sleeptracker.SleepingSession;
+import ru.yandex.practicum.sleeptracker.analyzers.BadSleepCountAnalyzer;
+import ru.yandex.practicum.sleeptracker.enums.SleepQuality;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

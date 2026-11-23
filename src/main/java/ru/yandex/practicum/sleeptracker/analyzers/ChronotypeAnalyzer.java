@@ -1,5 +1,9 @@
 
-package ru.yandex.practicum.sleeptracker;
+package ru.yandex.practicum.sleeptracker.analyzers;
+
+import ru.yandex.practicum.sleeptracker.enums.Chronotype;
+import ru.yandex.practicum.sleeptracker.SleepAnalysisResult;
+import ru.yandex.practicum.sleeptracker.SleepingSession;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,7 +55,7 @@ public class ChronotypeAnalyzer
                 .toList();
 
         Chronotype result = mostFrequent.size() == 1
-                ? mostFrequent.get(0)
+                ? mostFrequent.getFirst()
                 : Chronotype.PIGEON;
 
         return new SleepAnalysisResult<>(
@@ -97,7 +101,7 @@ public class ChronotypeAnalyzer
                 .max(Comparator.naturalOrder())
                 .orElseThrow();
 
-        LocalDate nightDate = getNightDate(sessions.get(0));
+        LocalDate nightDate = getNightDate(sessions.getFirst());
 
         LocalDateTime owlStart = nightDate.atTime(23, 0);
         LocalDateTime owlFinish =

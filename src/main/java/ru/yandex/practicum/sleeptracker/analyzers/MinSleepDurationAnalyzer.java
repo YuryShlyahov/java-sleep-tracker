@@ -1,31 +1,34 @@
 
-package ru.yandex.practicum.sleeptracker;
+package ru.yandex.practicum.sleeptracker.analyzers;
+
+import ru.yandex.practicum.sleeptracker.SleepAnalysisResult;
+import ru.yandex.practicum.sleeptracker.SleepingSession;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 
-public class MaxSleepDurationAnalyzer
+public class MinSleepDurationAnalyzer
         implements Function<List<SleepingSession>, SleepAnalysisResult<Long>> {
 
     @Override
     public SleepAnalysisResult<Long> apply(List<SleepingSession> sleepingSessions) {
 
-        Duration maxDuration = sleepingSessions.stream()
+        Duration minDuration = sleepingSessions.stream()
                 .map(session -> Duration.between(
                         session.getStart(),
                         session.getFinish()
                 ))
-                .max(Duration::compareTo)
+                .min(Duration::compareTo)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Невозможно найти максимальную продолжительность: список пуст"
+                        "Невозможно найти минимальную продолжительность: список пуст"
                 ));
 
-        long minutes = maxDuration.toMinutes();
+        long minutes = minDuration.toMinutes();
 
         return new SleepAnalysisResult<>(
                 minutes,
-                "Максимальная продолжительность сна составляет"
+                "Минимальная продолжительность сна составляет"
         );
     }
 }

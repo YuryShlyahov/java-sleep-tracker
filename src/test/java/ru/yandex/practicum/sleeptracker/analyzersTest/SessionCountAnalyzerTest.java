@@ -1,7 +1,10 @@
-package ru.yandex.practicum.sleeptracker;
+package ru.yandex.practicum.sleeptracker.analyzersTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.sleeptracker.SleepingSession;
+import ru.yandex.practicum.sleeptracker.analyzers.SessionCountAnalyzer;
+import ru.yandex.practicum.sleeptracker.enums.SleepQuality;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,7 +40,7 @@ public class SessionCountAnalyzerTest {
     }
 
     @Test
-    public void shouldCountZeroSessions(){
+    public void shouldCountZeroSessions() {
         assertEquals(0, sessionCountAnalyzer.apply(sleepingSessions).getValue());
     }
 }

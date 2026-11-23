@@ -1,7 +1,10 @@
-package ru.yandex.practicum.sleeptracker;
+package ru.yandex.practicum.sleeptracker.analyzersTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.sleeptracker.SleepingSession;
+import ru.yandex.practicum.sleeptracker.analyzers.SleeplessNightsAnalyzer;
+import ru.yandex.practicum.sleeptracker.enums.SleepQuality;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -130,6 +133,29 @@ public class SleeplessNightsAnalyzerTest {
         );
         sleepingSessions.add(firstSession);
         assertEquals(0, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
+    }
+
+    @Test
+    public void shouldCountOneWithChangingMonth() {
+        SleepingSession firstSession = new SleepingSession(
+                LocalDateTime.of(2025, 11, 30, 23, 0),
+                LocalDateTime.of(2025, 12, 1, 6, 0),
+                SleepQuality.GOOD
+        );
+        SleepingSession secondSession = new SleepingSession(
+                LocalDateTime.of(2025, 12, 2, 23, 0),
+                LocalDateTime.of(2025, 12, 3, 6, 0),
+                SleepQuality.GOOD
+        );
+        SleepingSession thirdSession = new SleepingSession(
+                LocalDateTime.of(2025, 12, 3, 23, 0),
+                LocalDateTime.of(2025, 12, 4, 6, 0),
+                SleepQuality.GOOD
+        );
+        sleepingSessions.add(firstSession);
+        sleepingSessions.add(secondSession);
+        sleepingSessions.add(thirdSession);
+        assertEquals(1, sleeplessNightsAnalyzer.apply(sleepingSessions).getValue());
     }
 
 }
