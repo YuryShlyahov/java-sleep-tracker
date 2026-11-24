@@ -137,6 +137,7 @@ public class ChronotypeAnalyzerTest {
         sleepingSessions.add(secondSession);
         assertEquals(Chronotype.PIGEON, chronotypeAnalyzer.apply(sleepingSessions).getValue());
     }
+
     @Test
     public void shouldReturnOwlWithManySleepsAtOneNight() {
         SleepingSession firstSession = new SleepingSession(
@@ -153,6 +154,7 @@ public class ChronotypeAnalyzerTest {
         sleepingSessions.add(secondSession);
         assertEquals(Chronotype.OWL, chronotypeAnalyzer.apply(sleepingSessions).getValue());
     }
+
     @Test
     public void shouldIgnoreSleepAtDay() {
         SleepingSession firstSession = new SleepingSession(

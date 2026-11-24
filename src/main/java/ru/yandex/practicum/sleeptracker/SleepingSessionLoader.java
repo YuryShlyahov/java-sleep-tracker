@@ -36,10 +36,14 @@ public class SleepingSessionLoader {
         if (sleepData.length != 3) {
             throw new IllegalArgumentException("Некорректная запись сна: " + line);
         }
-        return new SleepingSession(
-                LocalDateTime.parse(sleepData[0].trim(), DATE_TIME_FORMATTER),
-                LocalDateTime.parse(sleepData[1].trim(), DATE_TIME_FORMATTER),
-                SleepQuality.valueOf(sleepData[2].trim())
-        );
+        try {
+            return new SleepingSession(
+                    LocalDateTime.parse(sleepData[0].trim(), DATE_TIME_FORMATTER),
+                    LocalDateTime.parse(sleepData[1].trim(), DATE_TIME_FORMATTER),
+                    SleepQuality.valueOf(sleepData[2].trim())
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Ошибка в строке: " + line, e);
+        }
     }
 }
