@@ -20,14 +20,22 @@ public class SleepTrackerApp {
             System.out.println("Ошибка: не указан путь к файлу с данными о сне");
             return;
         }
-        SleepingSessionLoader sleepingSessionLoader =
-                new SleepingSessionLoader(args[0]);
-        List<SleepingSession> sleepingSessionList = sleepingSessionLoader.load();
-        functions.forEach(function -> {
-            SleepAnalysisResult<?> result = function.apply(sleepingSessionList);
-            String resultDescription = result.getDescription();
-            String value = String.valueOf(result.getValue());
-            System.out.println(resultDescription + " : " + value);
-        });
+        try {
+            SleepingSessionLoader sleepingSessionLoader =
+                    new SleepingSessionLoader(args[0]);
+            List<SleepingSession> sleepingSessionList = sleepingSessionLoader.load();
+            if (sleepingSessionList.isEmpty()) {
+                System.out.println("Список сессий сна пуст");
+                return;
+            }
+            functions.forEach(function -> {
+                SleepAnalysisResult<?> result = function.apply(sleepingSessionList);
+                String resultDescription = result.getDescription();
+                String value = String.valueOf(result.getValue());
+                System.out.println(resultDescription + " : " + value);
+            });
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }
